@@ -32,7 +32,7 @@ RegisterNetEvent("qb-cokesell:SellCokeNotEnough", function()
 end) 
 
 
--- Selling Function
+-- Selling Functions
 
 RegisterNetEvent("qb-cokesell:SellCoke", function()
 	local src = source;
