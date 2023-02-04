@@ -31,21 +31,6 @@ CreateThread(function()
     CreatePeds()
 end)
 
---[[
-local getCurrentPoliceActive = QBCore.Functions.TriggerCallback('ActivePolice', function(result)
-
-    if result > Config.Pigs then 
-        getPigsActive = true
-        print(result)
-        print("Pigs are active")
-    else
-        getPigsActive = false
-        print("no pigs active cunt")
-    end
-
-end)
-]]
-
 -- Target Exports
 
 Citizen.CreateThread(function()
@@ -62,49 +47,16 @@ Citizen.CreateThread(function()
     })
 end)
 
---[[ -- 
-RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
-    QBCore.Functions.TriggerCallback('ActivePolice', function(result)
-        if result > Config.PoliceNeeded then -- Two+ Police are needed to sell 
-    QBCore.Functions.TriggerCallback("QBCore:HasItem", function(hasItem)
-        if hasItem then
-            SellCoke()
-            NotifyPolice() -- send the alert
-        else
-            QBCore.Functions.Notify(Lang:t("error.no_coke"), "error")
-        end
-        end, "coke_brick")
-
-        elseif result < Config.PoliceNeeded then  
-            QBCore.Functions.Notify('Not Enough Police Online :3', 'error', 7500)
-        end
-
-end)
-end)
-]]
-
-local DealerHasMoney = 1000
-
-function ConfigRemoveMoney()
-    print("Removed Money via function")
-
-    QBCore.Functions.TriggerCallback('GetRemoveMoneyAmount', function(result)
-        DealerHasMoney = DealerHasMoney - result
-        print(result, "Paid to Player")
-    end)
-    
-end
-
 -- Change price if there's not enough coppas on
-RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
-         if DealerHasMoney > 0 then 
+RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function() 
+    QBCore.Functions.TriggerCallback('CheckDealerBal', function(result1)
+
+         if result1 >= Config.RequiredMoney then 
 
     QBCore.Functions.TriggerCallback("QBCore:HasItem", function(hasItem)
     QBCore.Functions.TriggerCallback('ActivePolice', function(result) -- Check for active COPS
 
         if result > 1 then 
-
-            ConfigRemoveMoney()
 
         -- check if the player has the item 
         if hasItem then
@@ -126,11 +78,9 @@ RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
 
         elseif result < 2 and hasItem then 
 
-            ConfigRemoveMoney()
-            print(DealerHasMoney)
-
             QBCore.Functions.Notify('Not Enough Police Needed the price will be extremely different :(', 'error', 7500)
             SellCokeNotEnough()
+
             -- AlertPolice() -- send the alert
         else
             QBCore.Functions.Notify('You Don\'t Have any Cocaine LOL', 'error', 7500)
@@ -139,8 +89,10 @@ end) -- THIS CLOSES THE POLICE ONLINE CHECK
 end, "coke_brick") -- THIS CLOSES THE HAS ITEM CALLBACK
 
 else
-     QBCore.Functions.Notify('The Dealer has no money', 'error', 7500)
+     QBCore.Functions.Notify('The Dealer only has $' .. result1 .. " In their account.. Transaction Failed.", 'error', 7500)
  end
+
+end) -- Ends DealerBal
 
 end) -- THIS CLOSES THE REGISTERNETEVENT
 

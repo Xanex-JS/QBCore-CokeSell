@@ -20,6 +20,9 @@ Config.CokeInfoNotEnough  = {
     { item = "coke_brick", price = math.random(10000, 35000) }, -- Chance of 10k-35k with no cops online
 }
 
+Config.SetDealerMoney = 550000 -- This sets the money of the dealer when the server/script restarts.
+Config.RequiredMoney = 50000 -- This sets how much money minimum the dealer needs to make a sale (see readme.md for more)
+
 -- Ped Spawns
 
 Config.Peds = {
