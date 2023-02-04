@@ -17,7 +17,7 @@ Config.CokeInfo  = {
 }
 -- Not enough police needed change price ALOT
 Config.CokeInfoNotEnough  = {
-    { item = "coke_brick", price = math.random(10000, 35000) }, -- Change of 10k-35k with no cops online
+    { item = "coke_brick", price = math.random(10000, 35000) }, -- Chance of 10k-35k with no cops online
 }
 
 -- Ped Spawns
