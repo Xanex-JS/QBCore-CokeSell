@@ -83,16 +83,18 @@ end)
 end)
 ]]
 
-local DealerHasMoney = 
+local DealerHasMoney = 1000
 
 -- Change price if there's not enough coppas on
 RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
-        -- if DealerHasMoney then 
+         if DealerHasMoney > 0 then 
 
     QBCore.Functions.TriggerCallback("QBCore:HasItem", function(hasItem)
     QBCore.Functions.TriggerCallback('ActivePolice', function(result) -- Check for active COPS
 
         if result > 1 then 
+
+            DealerHasMoney = DealerHasMoney - 1000
 
         -- check if the player has the item 
         if hasItem then
@@ -102,7 +104,7 @@ RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
             print(AlertPoliceCount)
 
             if AlertPoliceCount == 3 then 
-                -- QBCore.Functions.Notify('You hear a phone....', 'notify', 7500)
+                QBCore.Functions.Notify('You hear a phone....', 'notify', 7500)
                 exports['qb-dispatch']:DrugSale()
             end
 
@@ -113,6 +115,8 @@ RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
         -- if no cops online run the below code
 
         elseif result < 2 and hasItem then  
+            DealerHasMoney = DealerHasMoney - 1000
+            print(DealerHasMoney)
             QBCore.Functions.Notify('Not Enough Police Needed the price will be extremely different :(', 'error', 7500)
             SellCokeNotEnough()
             -- AlertPolice() -- send the alert
@@ -122,9 +126,9 @@ RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
 end) -- THIS CLOSES THE POLICE ONLINE CHECK
 end, "coke_brick") -- THIS CLOSES THE HAS ITEM CALLBACK
 
--- else
-    -- QBCore.Functions.Notify('The Dealer has no money', 'error', 7500)
--- end
+else
+     QBCore.Functions.Notify('The Dealer has no money', 'error', 7500)
+ end
 
 end) -- THIS CLOSES THE REGISTERNETEVENT
 

@@ -27,7 +27,7 @@ RegisterNetEvent("qb-cokesell:SellCokeNotEnough", function()
 		end
 	end
 	
-	Player.Functions.AddItem("cash", price);
+	Player.Functions.AddMoney("cash", price)
 	TriggerClientEvent('QBCore:Notify', source, Lang:t("success.sold_coke"), 'success')
 end) 
 
