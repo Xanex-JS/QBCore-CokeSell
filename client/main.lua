@@ -85,6 +85,16 @@ end)
 
 local DealerHasMoney = 1000
 
+function ConfigRemoveMoney()
+    print("Removed Money via function")
+
+    QBCore.Functions.TriggerCallback('GetRemoveMoneyAmount', function(result)
+        DealerHasMoney = DealerHasMoney - result
+        print(result, "Paid to Player")
+    end)
+    
+end
+
 -- Change price if there's not enough coppas on
 RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
          if DealerHasMoney > 0 then 
@@ -94,7 +104,7 @@ RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
 
         if result > 1 then 
 
-            DealerHasMoney = DealerHasMoney - 1000
+            ConfigRemoveMoney()
 
         -- check if the player has the item 
         if hasItem then
@@ -114,9 +124,11 @@ RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
 
         -- if no cops online run the below code
 
-        elseif result < 2 and hasItem then  
-            DealerHasMoney = DealerHasMoney - 1000
+        elseif result < 2 and hasItem then 
+
+            ConfigRemoveMoney()
             print(DealerHasMoney)
+
             QBCore.Functions.Notify('Not Enough Police Needed the price will be extremely different :(', 'error', 7500)
             SellCokeNotEnough()
             -- AlertPolice() -- send the alert
@@ -133,7 +145,7 @@ else
 end) -- THIS CLOSES THE REGISTERNETEVENT
 
 function SellCokeNotEnough()
-	QBCore.Functions.Progressbar("search_register", Lang:t("progress.selling_coke"), 20000, false, true, {
+	QBCore.Functions.Progressbar("search_register", Lang:t("progress.selling_coke"), 5, false, true, {
 		disableMovement = true,
 		disableCarMovement = true,
 		disableMouse = false,

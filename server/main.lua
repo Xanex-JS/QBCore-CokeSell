@@ -1,6 +1,17 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 players = {}
 
+-- Create Callback for getting how much coke was sold for then detuct it from the delears "bank account"
+
+QBCore.Functions.CreateCallback('GetRemoveMoneyAmount', function(result, cb)    
+	
+	for k, v in pairs(Config.CokeInfoNotEnough) do
+		result = v.price
+    end
+	cb(result)
+
+end)
+
 -- Get active police
 
 QBCore.Functions.CreateCallback('ActivePolice', function(result, cb)
@@ -27,7 +38,7 @@ RegisterNetEvent("qb-cokesell:SellCokeNotEnough", function()
 		end
 	end
 	
-	Player.Functions.AddMoney("cash", price)
+	--Player.Functions.AddMoney("cash", price)
 	TriggerClientEvent('QBCore:Notify', source, Lang:t("success.sold_coke"), 'success')
 end) 
 
