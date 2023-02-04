@@ -1,0 +1,30 @@
+Config = {}
+
+-- Blip Creation
+
+Config.UseBlip = false
+
+Config.BlipLocation = {
+	{title="Coke Dealer", colour=1, id=51, x = 240.83, y = 371.16, z = 105.74}
+} 
+
+-- Coke Selling
+
+Config.EnableSelling = true
+
+Config.CokeInfo  = {
+    { item = "coke_brick", price = 50000 },
+}
+-- Not enough police needed change price ALOT
+Config.CokeInfoNotEnough  = {
+    { item = "coke_brick", price = math.random(10000, 35000) }, -- Change of 10k-35k with no cops online
+}
+
+-- Ped Spawns
+
+Config.Peds = {
+    {
+        type = 'cokebuyer',
+        position = vector4(240.83, 371.16, 105.74, 249.62)
+    },
+}
