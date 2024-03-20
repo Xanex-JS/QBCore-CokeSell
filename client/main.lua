@@ -51,19 +51,18 @@ end)
 RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function() 
     QBCore.Functions.TriggerCallback('CheckDealerBal', function(result1)
 
-         if result1 >= Config.RequiredMoney then 
+         if result1 >= Config.Dealer['RequiredMoney'] then 
+        local HasItem = QBCore.Functions.HasItem('coke_brick')
 
-    QBCore.Functions.TriggerCallback("QBCore:HasItem", function(hasItem)
     QBCore.Functions.TriggerCallback('ActivePolice', function(result) -- Check for active COPS
 
-        if result > 1 then 
+        if result >= 1 then 
 
         -- check if the player has the item 
-        if hasItem then
+        if HasItem then
             SellCoke()
 
             local AlertPoliceCount = math.random(2, 4)
-            print(AlertPoliceCount)
 
             if AlertPoliceCount == 3 then 
                 QBCore.Functions.Notify('You hear a phone....', 'notify', 7500)
@@ -76,7 +75,7 @@ RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
 
         -- if no cops online run the below code
 
-        elseif result < 2 and hasItem then 
+        elseif result == 0 and HasItem then 
 
             QBCore.Functions.Notify('Not Enough Police Needed the price will be extremely different :(', 'error', 7500)
             SellCokeNotEnough()
@@ -86,7 +85,6 @@ RegisterNetEvent('qb-cokesell:SellCokeItemCheck', function()
             QBCore.Functions.Notify('You Don\'t Have any Cocaine LOL', 'error', 7500)
         end
 end) -- THIS CLOSES THE POLICE ONLINE CHECK
-end, "coke_brick") -- THIS CLOSES THE HAS ITEM CALLBACK
 
 else
      QBCore.Functions.Notify('The Dealer only has $' .. result1 .. " In their account.. Transaction Failed.", 'error', 7500)
@@ -97,7 +95,7 @@ end) -- Ends DealerBal
 end) -- THIS CLOSES THE REGISTERNETEVENT
 
 function SellCokeNotEnough()
-	QBCore.Functions.Progressbar("search_register", Lang:t("progress.selling_coke"), 5, false, true, {
+	QBCore.Functions.Progressbar("search_register", Lang:t("progress.selling_coke"), 5000, false, true, {
 		disableMovement = true,
 		disableCarMovement = true,
 		disableMouse = false,
@@ -117,7 +115,7 @@ end
 -- end of change price
 
 function SellCoke()
-	QBCore.Functions.Progressbar("search_register", Lang:t("progress.selling_coke"), 20000, false, true, {
+	QBCore.Functions.Progressbar("search_register", Lang:t("progress.selling_coke"), 2000, false, true, {
 		disableMovement = true,
 		disableCarMovement = true,
 		disableMouse = false,

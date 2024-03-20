@@ -6,18 +6,66 @@ players = {}
 AddEventHandler('onResourceStart', function(resource)
    if resource == GetCurrentResourceName() then
 	local loadFile = LoadResourceFile(GetCurrentResourceName(), "./money.json")
-	local information = {Money = Config.SetDealerMoney}
+	local information = {Money = Config.Dealer['SetDealerMoney']}
 	
 	SaveResourceFile(GetCurrentResourceName(), "money.json", json.encode(information), -1)
    end
 end)
+
+-- Give dealer money thread. 
+
+function CokeBal()
+
+	local loadFile = LoadResourceFile(GetCurrentResourceName(), "./money.json") 
+	local extract = {}
+	extract = json.decode(loadFile)
+	SaveResourceFile(GetCurrentResourceName(), "money.json", json.encode(extract), -1)
+	return extract.Money
+
+end
+
+Citizen.CreateThread(function()
+
+	while true do
+
+		Citizen.Wait(Config.Dealer['RefreshTimer'])
+
+		if CokeBal() < Config.Dealer['LowestBalance'] and Config.Dealer['OnlyGiveMoneyWhenBroke'] == true then 
+
+		local loadFile = LoadResourceFile(GetCurrentResourceName(), "./money.json")
+		local information = {
+			Money = Config.Dealer['ShipmentAmount']
+		}
+
+		TriggerClientEvent('QBCore:Notify', -1,  "The coke dealer has recived a money shipment of $" .. information.Money)
+		print("Coke Dealer Shipment")
+		
+		SaveResourceFile(GetCurrentResourceName(), "money.json", json.encode(information), -1)
+
+	elseif Config.Dealer['OnlyGiveMoneyWhenBroke'] == false then 		-- randomly give dealer money if the config OnlyGiveMoneyWhenBroke is false
+
+		local loadFile = LoadResourceFile(GetCurrentResourceName(), "./money.json")
+		local information = {
+			Money = Config.Dealer['ShipmentAmount']
+		}
+
+		TriggerClientEvent('QBCore:Notify', -1,  "The coke dealer has recived a money shipment of $" .. information.Money)
+		print("Coke Dealer Shipment")
+		
+		SaveResourceFile(GetCurrentResourceName(), "money.json", json.encode(information), -1)
+
+	end
+
+
+	end
+  end)
 
 -- Coke dealer commands
 
 QBCore.Commands.Add('SetCokeBal', 'Admin Force set the Coke Dealers Bank Account', {}, false, function(source, args)
 
 	local loadFile = LoadResourceFile(GetCurrentResourceName(), "./money.json")
-	local information = {Money = args[1]}
+	local information = {Money = tonumber(args[1])}
 	
 	SaveResourceFile(GetCurrentResourceName(), "money.json", json.encode(information), -1)
 
@@ -35,7 +83,7 @@ QBCore.Commands.Add('CokeBal', 'Check how much money the coke dealer has', {}, f
 
 	SaveResourceFile(GetCurrentResourceName(), "money.json", json.encode(extract), -1)
 
-end, "admin")
+end)
 
 QBCore.Functions.CreateCallback("CheckDealerBal", function(source, cb)
 
@@ -67,6 +115,16 @@ QBCore.Functions.CreateCallback('ActivePolice', function(result, cb)
 	cb(result)
 end)
 
+function GetMoney()
+
+	local loadFile = LoadResourceFile(GetCurrentResourceName(), "./money.json") 
+	local extract = {}
+	extract = json.decode(loadFile)
+	SaveResourceFile(GetCurrentResourceName(), "money.json", json.encode(extract), -1)
+	return extract.Money
+
+end
+
 --  Selling Coke With not enough cops online function
 
 RegisterNetEvent("qb-cokesell:SellCokeNotEnough", function()
@@ -74,6 +132,7 @@ RegisterNetEvent("qb-cokesell:SellCokeNotEnough", function()
 	local Player = QBCore.Functions.GetPlayer(src);
 	local price = 0;
 	local TakeMoney = 0;
+	local MoneyGiven = 0;
 	
 	for k, v in next, Player.PlayerData.items do
 		for i=1, #Config.CokeInfoNotEnough do
@@ -81,10 +140,9 @@ RegisterNetEvent("qb-cokesell:SellCokeNotEnough", function()
 			if data.item == v.name then
 				price = price + (data.price * v.amount);
 				Player.Functions.RemoveItem(v.name, v.amount, k);
-				local Randomize = math.random(price, 350000)
 
 				local loadFile = LoadResourceFile(GetCurrentResourceName(), "./money.json")
-				local information = {Money = Randomize}
+				local information = {Money = GetMoney() - price}
 				
 				SaveResourceFile(GetCurrentResourceName(), "money.json", json.encode(information), -1)
 
@@ -114,13 +172,19 @@ RegisterNetEvent("qb-cokesell:SellCoke", function()
 			if data.item == v.name then
 				price = price + (data.price * v.amount);
 				Player.Functions.RemoveItem(v.name, v.amount, k);
+
+				local loadFile = LoadResourceFile(GetCurrentResourceName(), "./money.json")
+				local information = {Money = GetMoney() - price}
+				
+				SaveResourceFile(GetCurrentResourceName(), "money.json", json.encode(information), -1)
+
 				TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[v.name], 'remove')
 				break
 			end
 		end
 	end
 	
-	Player.Functions.AddItem("cash", price);
+	Player.Functions.AddMoney("cash", price)
 	TriggerClientEvent('QBCore:Notify', source, Lang:t("success.sold_coke"), 'success')
 end) 
 

@@ -4,7 +4,7 @@ Simply drag this into your QBCore Resources folder where QB-cokesell is located.
 
 # Commands
 
-/CokeBal -- Check how much moeny the dealer has :D
+/CokeBal -- Check how much money the dealer has :D
 /SetCokeBal -- Admin Restricted.. SETS the money of the dealers account, may add a command to add money instead of setting it.. if enough ppl want it i will.
 
 # Info
